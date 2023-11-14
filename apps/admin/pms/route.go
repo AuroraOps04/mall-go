@@ -22,6 +22,14 @@ func Route(engine *gin.RouterGroup) {
 	// attribute manager route
 	attributeGroup := engine.Group("/productAttribute")
 	{
+		attributeGroup.GET("/:id", ProductAttributeController.GetById)
+		attributeGroup.GET("/attrInfo/:productCategoryId", ProductAttributeController.GetInfoByProductCategoryId)
+		attributeGroup.POST("/create", ProductAttributeController.Create)
+		attributeGroup.POST("/delete", ProductAttributeController.DeleteBatch)
+		attributeGroup.GET("/list/:cId", ProductAttributeController.PageByProductAttributeCategoryId)
+		attributeGroup.POST("/update/:id", ProductAttributeController.UpdateById)
+
+		// attribute category manager route
 		categoryGroup := attributeGroup.Group("/category")
 		{
 			categoryGroup.GET("/:id", AttributeCategoryController.GetById)
@@ -35,12 +43,17 @@ func Route(engine *gin.RouterGroup) {
 
 	}
 
-	// product attribute manager route
+	// product category manager route
 	categoryGroup := engine.Group("/productCategory")
 	{
+		categoryGroup.GET("/:id", ProductCategoryController.GetById)
 		categoryGroup.POST("/create", ProductCategoryController.Create)
+		categoryGroup.POST("/delete/:id", ProductCategoryController.DeleteById)
 		categoryGroup.GET("/list/:parentId", ProductCategoryController.Page)
 		categoryGroup.GET("/list/withChildren", ProductCategoryController.ListAllWithChildren)
+		categoryGroup.POST("/update/:id", ProductCategoryController.UpdateById)
+		categoryGroup.POST("/update/navStatus", ProductCategoryController.UpdateNavStatus)
+		categoryGroup.POST("/update/showStatus", ProductCategoryController.UpdateShowStatus)
 	}
 
 }

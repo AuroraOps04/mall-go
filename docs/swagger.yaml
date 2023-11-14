@@ -1,0 +1,837 @@
+basePath: /admin
+definitions:
+  common.PageResult:
+    properties:
+      list: {}
+      pageNum:
+        type: string
+      pageSize:
+        type: string
+      total:
+        type: integer
+      totalPage:
+        type: string
+    type: object
+  common.Result:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  pms.AttrInfoDto:
+    properties:
+      attributeCategoryId:
+        type: integer
+      attributeId:
+        type: integer
+    type: object
+  pms.Brand:
+    properties:
+      bigPic:
+        type: string
+      brandStory:
+        type: string
+      createdAt:
+        type: string
+      factoryStatus:
+        type: integer
+      firstLetter:
+        type: string
+      id:
+        type: integer
+      logo:
+        type: string
+      name:
+        type: string
+      productCommentCount:
+        type: integer
+      productCount:
+        type: integer
+      showStatus:
+        type: integer
+      sort:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  pms.ProductAttribute:
+    properties:
+      attributeValues:
+        items:
+          $ref: '#/definitions/pms.ProductAttributeValue'
+        type: array
+      createdAt:
+        type: string
+      filterType:
+        type: integer
+      handAddStatus:
+        type: integer
+      id:
+        type: integer
+      inputList:
+        type: string
+      inputType:
+        type: integer
+      name:
+        type: string
+      productAttributeCategory:
+        $ref: '#/definitions/pms.ProductAttributeCategory'
+      productAttributeCategoryId:
+        type: integer
+      productCategories:
+        items:
+          $ref: '#/definitions/pms.ProductCategory'
+        type: array
+      relatedStatus:
+        type: integer
+      searchType:
+        type: integer
+      selectType:
+        type: integer
+      sort:
+        type: integer
+      type:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  pms.ProductAttributeCategory:
+    properties:
+      attributeCount:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      paramCount:
+        type: integer
+      productAttributeList:
+        items:
+          $ref: '#/definitions/pms.ProductAttribute'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  pms.ProductAttributeValue:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      productAttribute:
+        $ref: '#/definitions/pms.ProductAttribute'
+      productAttributeId:
+        type: integer
+      productId:
+        type: integer
+      updatedAt:
+        type: string
+      value:
+        type: string
+    type: object
+  pms.ProductCategory:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/pms.ProductCategory'
+        type: array
+      createdAt:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      keywords:
+        type: string
+      level:
+        type: integer
+      name:
+        type: string
+      navStatus:
+        type: integer
+      parent:
+        $ref: '#/definitions/pms.ProductCategory'
+      parentId:
+        type: integer
+      productAttributes:
+        items:
+          $ref: '#/definitions/pms.ProductAttribute'
+        type: array
+      productCount:
+        type: integer
+      productUnit:
+        type: string
+      showStatus:
+        type: integer
+      sort:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:4000
+info:
+  contact:
+    email: 5239604@qq.com
+    name: AuroraOps04
+    url: https://auroraops04.com
+  description: based on gin gorm
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: mall api based on go
+  version: v1.0
+paths:
+  /brand/{id}:
+    get:
+      parameters:
+      - default: 1
+        description: brand id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.Brand'
+              type: object
+      tags:
+      - brand
+  /brand/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: add brand
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/pms.Brand'
+      responses: {}
+      tags:
+      - brand
+  /brand/delete/{id}:
+    get:
+      parameters:
+      - description: brand id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      tags:
+      - brand
+  /brand/delete/batch:
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.Brand'
+                  type: array
+              type: object
+      summary: delete brand batch by ids
+      tags:
+      - brand
+  /brand/list:
+    get:
+      parameters:
+      - description: keyword
+        in: query
+        name: keyword
+        type: string
+      - description: keyword
+        enum:
+        - "0"
+        - "1"
+        in: query
+        name: showStatus
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PageResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.Brand'
+                  type: array
+              type: object
+      tags:
+      - brand
+  /brand/listAll:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.Brand'
+                  type: array
+              type: object
+      summary: list all brand
+      tags:
+      - brand
+  /brand/update/{id}:
+    post:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: update brand
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/pms.Brand'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: Update Brand by id
+      tags:
+      - brand
+  /brand/update/factoryStatus:
+    post:
+      parameters:
+      - description: factory status
+        in: formData
+        name: factoryStatus
+        required: true
+        type: string
+      - description: id array join as ,
+        in: formData
+        name: ids
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: update brand show status batch
+      tags:
+      - brand
+  /brand/update/showStatus:
+    post:
+      parameters:
+      - description: show status
+        enum:
+        - "0"
+        - "1"
+        in: formData
+        name: showStatus
+        required: true
+        type: string
+      - description: id array join as ,
+        in: formData
+        name: ids
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      tags:
+      - brand
+  /productAttribute/{id}:
+    get:
+      parameters:
+      - description: attribute id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.ProductAttribute'
+              type: object
+      summary: get attribute by id
+      tags:
+      - attribute
+    post:
+      parameters:
+      - description: attribute id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 'update attribute '
+        in: body
+        name: attr
+        required: true
+        schema:
+          $ref: '#/definitions/pms.ProductAttribute'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: update attribute by id
+      tags:
+      - attribute
+  /productAttribute/attrInfo/{productCategoryId}:
+    get:
+      parameters:
+      - description: product category id
+        in: path
+        name: productCategoryId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.AttrInfoDto'
+                  type: array
+              type: object
+      summary: GetInfoByProductCategoryId
+      tags:
+      - attribute
+  /productAttribute/category/{id}:
+    get:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.ProductAttributeCategory'
+              type: object
+      summary: get attribute category by id
+      tags:
+      - attribute category
+  /productAttribute/category/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: category name
+        in: formData
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: create attribute category
+      tags:
+      - attribute category
+  /productAttribute/category/delete/{id}:
+    get:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: Delete by  id
+      tags:
+      - attribute category
+  /productAttribute/category/list:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PageResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.ProductAttributeCategory'
+                  type: array
+              type: object
+      summary: list by page
+      tags:
+      - attribute category
+  /productAttribute/category/list/withAttr:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.ProductAttributeCategory'
+              type: object
+      summary: select all and preload attribute list
+      tags:
+      - attribute category
+  /productAttribute/category/update/{id}:
+    post:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: update category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/pms.ProductAttributeCategory'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: update by  id
+      tags:
+      - attribute category
+  /productAttribute/create:
+    post:
+      parameters:
+      - description: add attribute
+        in: body
+        name: attribute
+        required: true
+        schema:
+          $ref: '#/definitions/pms.ProductAttribute'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.ProductAttribute'
+              type: object
+      summary: create attribute
+      tags:
+      - attribute
+  /productAttribute/delete:
+    post:
+      responses: {}
+      summary: Delete Batch productAttribute
+      tags:
+      - attribute
+      - uncompleted
+  /productAttribute/list/{cId}:
+    get:
+      parameters:
+      - description: product attribute category id
+        in: path
+        name: cId
+        required: true
+        type: integer
+      - description: type
+        in: query
+        name: type
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PageResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.ProductAttribute'
+                  type: array
+              type: object
+      summary: list by page
+      tags:
+      - attribute
+  /productCategory/{id}:
+    get:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.ProductCategory'
+              type: object
+      summary: get product category by id
+      tags:
+      - product category
+  /productCategory/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: add product category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/pms.ProductCategory'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.ProductCategory'
+              type: object
+      summary: create product category
+      tags:
+      - product category
+  /productCategory/delete/{id}:
+    post:
+      parameters:
+      - description: wanted remove category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: remove category by id
+      tags:
+      - product category
+  /productCategory/list/{parentId}:
+    get:
+      parameters:
+      - description: parent id
+        in: path
+        name: parentId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.PageResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.ProductCategory'
+                  type: array
+              type: object
+      summary: product category page view
+      tags:
+      - product category
+  /productCategory/list/withChildren:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.ProductCategory'
+                  type: array
+              type: object
+      summary: list all category that parentId equals zero and preload children
+      tags:
+      - product category
+  /productCategory/update/{id}:
+    post:
+      parameters:
+      - description: wanted update category's id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: update category by id
+      tags:
+      - product category
+  /productCategory/update/navStatus:
+    post:
+      parameters:
+      - description: nav status
+        enum:
+        - 0
+        - 1
+        in: query
+        name: navStatus
+        required: true
+        type: integer
+      - collectionFormat: csv
+        description: id list
+        in: query
+        items:
+          type: integer
+        name: ids
+        required: true
+        type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: update category's nav status when id in ids
+      tags:
+      - product category
+      - uncompleted
+  /productCategory/update/showStatus:
+    post:
+      parameters:
+      - description: nav status
+        enum:
+        - 0
+        - 1
+        in: query
+        name: showStatus
+        required: true
+        type: integer
+      - collectionFormat: csv
+        description: id list
+        in: query
+        items:
+          type: integer
+        name: ids
+        required: true
+        type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: update category's show status when id in ids
+      tags:
+      - product category
+      - uncompleted
+swagger: "2.0"

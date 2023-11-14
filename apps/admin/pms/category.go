@@ -2,10 +2,12 @@ package pms
 
 import (
 	"github.com/AuroraOps04/mall-go/common"
+	dto "github.com/AuroraOps04/mall-go/dto/pms"
 	"github.com/AuroraOps04/mall-go/global"
-	"github.com/AuroraOps04/mall-go/model/base"
 	"github.com/AuroraOps04/mall-go/model/pms"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 	"strconv"
 )
 
@@ -14,10 +16,12 @@ type productCategoryController struct {
 
 var ProductCategoryController = &productCategoryController{}
 
-func (p *productCategoryController) base(ctx *gin.Context) {
-
-}
-
+// ListAllWithChildren
+//
+//	@Summary	list all category that parentId equals zero and preload children
+//	@Tags		product category
+//	@Success	200	{object}	common.Result{data=[]pms.ProductCategory}
+//	@Router		/productCategory/list/withChildren [get]
 func (p *productCategoryController) ListAllWithChildren(ctx *gin.Context) {
 	var cs []*pms.ProductCategory
 	// base category id is 0
@@ -26,28 +30,27 @@ func (p *productCategoryController) ListAllWithChildren(ctx *gin.Context) {
 
 }
 
+// Create
+//
+//	@Summary	create product category
+//	@Tags		product category
+//	@Accept		json
+//	@Param		category				body		dto.CategoryDto	true	"add product category"
+//	@Success	200						{object}	common.Result{data=pms.ProductCategory}
+//	@Router		/productCategory/create [post]
 func (p *productCategoryController) Create(ctx *gin.Context) {
-	var c pms.ProductCategory
-	if err := ctx.ShouldBindJSON(&c); err != nil {
+	var cDto dto.CategoryDto
+	if err := ctx.ShouldBindJSON(&cDto); err != nil {
 		common.Error(ctx, "params error :"+err.Error())
 		return
 	}
-
-	attributeIds := ctx.PostFormArray("productAttributeIdList")
-	var attributes []*pms.ProductAttribute
-	for _, id := range attributeIds {
-		parseUint, err := strconv.ParseUint(id, 10, 32)
-		if err != nil {
-			continue
-		}
-		attributes = append(attributes, &pms.ProductAttribute{
-			BaseModel: base.BaseModel{
-				ID: uint(parseUint),
-			},
-		})
+	var c pms.ProductCategory
+	err := copier.Copy(&c, &cDto)
+	if err != nil {
+		common.Error(ctx, "server error")
+		return
 	}
 
-	c.ProductAttributes = attributes
 	if err := global.Db.Create(&c).Error; err != nil {
 
 		common.Error(ctx, "create error: "+err.Error())
@@ -58,6 +61,13 @@ func (p *productCategoryController) Create(ctx *gin.Context) {
 
 }
 
+// Page
+//
+//	@Summary	product category page view
+//	@Tags		product category
+//	@Param		parentId	path		int	true	"parent id"
+//	@Success	200			{object}	common.PageResult{data=[]pms.ProductCategory}
+//	@Router		/productCategory/list/{parentId} [get]
 func (p *productCategoryController) Page(ctx *gin.Context) {
 	parentId := ctx.Param("parentId")
 	var cs []*pms.ProductCategory
@@ -72,4 +82,125 @@ func (p *productCategoryController) Page(ctx *gin.Context) {
 		return
 	}
 	common.Page(ctx, cs, count)
+}
+
+// GetById
+//
+//	@Summary	get product category by id
+//	@Tags		product category
+//	@Param		id	path		int	true	"category id"
+//	@Success	200	{object}	common.Result{data=pms.ProductCategory}
+//	@Router		/productCategory/{id} [get]
+func (p *productCategoryController) GetById(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var c pms.ProductCategory
+	tx := global.Db.Model(&c).First(&c, id)
+	if tx.Error != nil {
+		common.Error(ctx, tx.Error.Error())
+		return
+	}
+	common.Success(ctx, c)
+}
+
+// DeleteById
+//
+//	@Summary	remove category by id
+//	@Tags		product category
+//	@Param		id	path		int	true	"wanted remove category id"
+//	@Success	200	{object}	common.Result{data=int}
+//	@Router		/productCategory/delete/{id} [post]
+func (p *productCategoryController) DeleteById(ctx *gin.Context) {
+	id := ctx.Param("id")
+	tx := global.Db.Delete(&pms.ProductCategory{}, id)
+	if tx.Error != nil {
+		common.Error(ctx, tx.Error.Error())
+		return
+	}
+	common.Success(ctx, tx.RowsAffected)
+}
+
+// UpdateById
+//
+//	@Summary	update category by id
+//	@Tags		product category
+//	@Param		id	path		int	true	"wanted update category's id"
+//	@Success	200	{object}	common.Result{data=int}
+//	@Router		/productCategory/update/{id} [post]
+func (p *productCategoryController) UpdateById(ctx *gin.Context) {
+	var cDto dto.CategoryDto
+	var c pms.ProductCategory
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		common.Error(ctx, "id must be integer")
+		return
+	}
+	if err := ctx.ShouldBindJSON(&cDto); err != nil {
+		common.Error(ctx, "params error:"+err.Error())
+		return
+	}
+	err = copier.Copy(&c, &cDto)
+	if err != nil {
+		common.Error(ctx, "server error")
+		return
+	}
+	c.ID = uint(id)
+
+	err = global.Db.Debug().Transaction(func(tx *gorm.DB) error {
+		tx.Updates(&c)
+
+		err2 := tx.Model(&c).Association("ProductAttributes").Replace(c.ProductAttributes)
+		return err2
+	})
+	//tx := global.Db.Debug().Save(&c)
+
+	//if tx.Error != nil || tx.RowsAffected == 0 {
+	//	common.Error(ctx, "update error: "+err.Error())
+	//	return
+	//}
+	common.Success(ctx, "ok")
+
+}
+
+// UpdateNavStatus
+//
+//	@Summary	update category's nav status when id in ids
+//	@Tags		product category
+//	@Param		navStatus	form		int		true	"nav status"	Enums(0,1)
+//	@Param		ids			form		[]int	true	"id list"
+//	@Success	200			{object}	common.Result{data=int}
+//	@Router		/productCategory/update/navStatus  [post]
+func (p *productCategoryController) UpdateNavStatus(ctx *gin.Context) {
+	var params dto.UpdateCategoryNavStatusDto
+	if err := ctx.ShouldBind(&params); err != nil {
+		common.Error(ctx, "params error: "+err.Error())
+		return
+	}
+	tx := global.Db.Model(&pms.ProductCategory{}).Where("id in ?", params.Ids).Update("nav_status", params.NavStatus)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		common.Error(ctx, "update error")
+		return
+	}
+	common.Success(ctx, tx.RowsAffected)
+}
+
+// UpdateShowStatus
+//
+//	@Summary	update category's show status when id in ids
+//	@Tags		product category
+//	@Param		showStatus	form		int		true	"nav status"	Enums(0,1)
+//	@Param		ids			form		[]int	true	"id list"
+//	@Success	200			{object}	common.Result{data=int}
+//	@Router		/productCategory/update/showStatus  [post]
+func (p *productCategoryController) UpdateShowStatus(ctx *gin.Context) {
+	var params dto.UpdateCategoryShowStatusDto
+	if err := ctx.ShouldBind(&params); err != nil {
+		common.Error(ctx, "params error: "+err.Error())
+		return
+	}
+	tx := global.Db.Model(&pms.ProductCategory{}).Where("id in ?", params.Ids).Update("show_status", params.ShowStatus)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		common.Error(ctx, "update error")
+		return
+	}
+	common.Success(ctx, tx.RowsAffected)
 }

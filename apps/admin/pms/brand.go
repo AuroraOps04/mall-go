@@ -13,7 +13,12 @@ type brandController struct{}
 
 var BrandController = &brandController{}
 
-// GetById find by id
+// GetById godoc
+//
+//	@Param		id	path		int	true	"brand id"	default(1)
+//	@Success	200	{object}	common.Result{data=pms.Brand}
+//	@Tags		brand
+//	@Router		/brand/{id} [get]
 func (c *brandController) GetById(ctx *gin.Context) {
 	b := pms.Brand{}
 	ui := ctx.Param("id")
@@ -31,6 +36,12 @@ func (c *brandController) GetById(ctx *gin.Context) {
 	common.Success(ctx, b)
 }
 
+// Create godoc
+//
+//	@Tags	brand
+//	@Param	brand	body	pms.Brand	true	"add brand"
+//	@Accept	json
+//	@Router	/brand/create [post]
 func (c *brandController) Create(ctx *gin.Context) {
 	b := pms.Brand{}
 	err := ctx.ShouldBindJSON(&b)
@@ -50,6 +61,13 @@ func (c *brandController) Create(ctx *gin.Context) {
 	common.Success(ctx, tx.RowsAffected)
 }
 
+// Page godoc
+//
+//	@Param		keyword		query	string	false	"keyword"
+//	@Param		showStatus	query	string	false	"keyword"	Enums(0, 1)
+//	@Tags		brand
+//	@Success	200	{object}	common.PageResult{data=[]pms.Brand}
+//	@Router		/brand/list [get]
 func (c *brandController) Page(ctx *gin.Context) {
 	keyword := ctx.Query("keyword")
 	showStatus := ctx.Query("showStatus")
@@ -69,6 +87,12 @@ func (c *brandController) Page(ctx *gin.Context) {
 	common.Page(ctx, brands, count)
 }
 
+// DeleteById godoc
+//
+//	@Param		id	path	int	true	"brand id"
+//	@Tags		brand
+//	@Success	200	{object}	common.Result{data=int}
+//	@Router		/brand/delete/{id} [get]
 func (c *brandController) DeleteById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	tx := global.Db.Delete(&pms.Brand{}, id)
@@ -79,6 +103,15 @@ func (c *brandController) DeleteById(ctx *gin.Context) {
 	common.Success(ctx, tx.RowsAffected)
 }
 
+// UpdateShowStatusBatch godoc
+//
+//	@Param		showStatus	formData	string	true	"show status"			Enums(0,1)
+//	@Param		ids			formData	string	true	"id array join as ,"	"1,2"
+//	@Tags		brand
+//
+//	@Success	200	{object}	common.Result{data=int}
+//
+//	@Router		/brand/update/showStatus [post]
 func (c *brandController) UpdateShowStatusBatch(ctx *gin.Context) {
 
 	showStatus := ctx.PostForm("showStatus")
@@ -92,6 +125,17 @@ func (c *brandController) UpdateShowStatusBatch(ctx *gin.Context) {
 	common.Error(ctx, tx.Error.Error())
 }
 
+// UpdateFactoryStatusBatch godoc
+//
+//	@Summary	update brand show status batch
+//
+//	@Param		factoryStatus	formData	string	true	"factory status"
+//	@Param		ids				formData	string	true	"id array join as ,"	"1,2"
+//	@Tags		brand
+//
+//	@Success	200	{object}	common.Result{data=int}
+//
+//	@Router		/brand/update/factoryStatus [post]
 func (c *brandController) UpdateFactoryStatusBatch(ctx *gin.Context) {
 
 	factoryStatus := ctx.Query("factoryStatus")
@@ -105,6 +149,16 @@ func (c *brandController) UpdateFactoryStatusBatch(ctx *gin.Context) {
 	common.Error(ctx, tx.Error.Error())
 }
 
+// Update godoc
+//
+//	@Summary	Update Brand by id
+//	@Param		id		path	int			true	"id"
+//	@Param		brand	body	pms.Brand	true	"update brand"
+//	@Tags		brand
+//
+//	@Success	200	{object}	common.Result{data=int}
+//
+//	@Router		/brand/update/{id} [post]
 func (c *brandController) Update(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var b pms.Brand
@@ -113,7 +167,7 @@ func (c *brandController) Update(ctx *gin.Context) {
 		common.Error(ctx, "params error")
 		return
 	}
-	tx := global.Db.Model(&pms.Brand{}).Where("id = ?", id).Updates(b)
+	tx := global.Db.Where("id = ?", id).Save(&b)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -121,12 +175,25 @@ func (c *brandController) Update(ctx *gin.Context) {
 	common.Success(ctx, tx.RowsAffected)
 }
 
+// ListAll godoc
+//
+//	@Summary	list all brand
+//	@Tags		brand
+//	@Success	200	{object}	common.Result{data=[]pms.Brand}
+//	@Router		/brand/listAll [get]
 func (c *brandController) ListAll(ctx *gin.Context) {
 	var b []*pms.Brand
 	global.Db.Model(&pms.Brand{}).Find(&b)
 	common.Success(ctx, b)
 }
 
+// DeleteBatch godoc
+//
+//	@Summary	delete brand batch by ids
+//	@Params		ids formData []string true
+//	@Tags		brand
+//	@Success	200	{object}	common.Result{data=[]pms.Brand}
+//	@Router		/brand/delete/batch [post]
 func (c *brandController) DeleteBatch(ctx *gin.Context) {
 	ids := ctx.PostFormArray("ids")
 	tx := global.Db.Delete(&pms.Brand{}, ids)

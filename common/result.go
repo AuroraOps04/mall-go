@@ -1,17 +1,29 @@
 package common
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
+
+type Result struct {
+	Code    int         `json:"code"`
+	Data    interface{} `json:"data"`
+	Message string      `json:"message"`
+}
 
 func Success(ctx *gin.Context, data interface{}) {
-	ctx.JSON(200, gin.H{
-		"code":    200,
-		"data":    data,
-		"message": "ok",
+	ctx.JSON(200, Result{
+		Code:    200,
+		Message: "ok",
+		Data:    data,
 	})
 }
 
 func Error(ctx *gin.Context, msg string) {
-	ctx.JSON(200, gin.H{})
+	ctx.JSON(200, Result{
+		Code:    400,
+		Message: msg,
+		Data:    nil,
+	})
 }
 
 type PageResult struct {

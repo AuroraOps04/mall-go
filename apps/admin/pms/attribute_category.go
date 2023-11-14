@@ -11,6 +11,12 @@ type attributeCategoryController struct{}
 
 var AttributeCategoryController = &attributeCategoryController{}
 
+// Page
+//
+//	@Summary	list by page
+//	@Tags		attribute category
+//	@Success	200	{object}	common.PageResult{data=[]pms.ProductAttributeCategory}
+//	@Router		/productAttribute/category/list [get]
 func (a *attributeCategoryController) Page(ctx *gin.Context) {
 	var categories []*pms.ProductAttributeCategory
 	tx := global.Db.Model(&pms.ProductAttributeCategory{}).Scopes(common.PreparePage(ctx))
@@ -21,6 +27,14 @@ func (a *attributeCategoryController) Page(ctx *gin.Context) {
 	common.Page(ctx, categories, count)
 }
 
+// Create
+//
+//	@Summary	create attribute category
+//	@Tags		attribute category
+//	@Accept		json
+//	@Param		name	formData	string	true	"category name"
+//	@Success	200		{object}	common.Result{data=int}
+//	@Router		/productAttribute/category/create [post]
 func (a *attributeCategoryController) Create(ctx *gin.Context) {
 	name := ctx.PostForm("name")
 	tx := global.Db.Create(&pms.ProductAttributeCategory{
@@ -30,9 +44,16 @@ func (a *attributeCategoryController) Create(ctx *gin.Context) {
 		common.Success(ctx, tx.Error.Error())
 		return
 	}
-	common.Success(ctx, name)
+	common.Success(ctx, tx.RowsAffected)
 }
 
+// GetById
+//
+//	@Summary	get attribute category by id
+//	@Tags		attribute category
+//	@Param		id	path		int	true	"category id"
+//	@Success	200	{object}	common.Result{data=pms.ProductAttributeCategory}
+//	@Router		/productAttribute/category/{id} [get]
 func (a *attributeCategoryController) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var ac pms.ProductAttributeCategory
@@ -44,6 +65,13 @@ func (a *attributeCategoryController) GetById(ctx *gin.Context) {
 	common.Success(ctx, ac)
 }
 
+// DeleteById
+//
+//	@Summary	Delete by  id
+//	@Tags		attribute category
+//	@Param		id	path		int	true	"category id"
+//	@Success	200	{object}	common.Result{data=int}
+//	@Router		/productAttribute/category/delete/{id} [get]
 func (a *attributeCategoryController) DeleteById(ctx *gin.Context) {
 
 	id := ctx.Param("id")
@@ -55,12 +83,26 @@ func (a *attributeCategoryController) DeleteById(ctx *gin.Context) {
 	common.Success(ctx, tx.RowsAffected)
 }
 
+// ListAllWithAttr
+//
+//	@Summary	select all and preload attribute list
+//	@Tags		attribute category
+//	@Success	200	{object}	common.Result{data=pms.ProductAttributeCategory}
+//	@Router		/productAttribute/category/list/withAttr [get]
 func (a *attributeCategoryController) ListAllWithAttr(ctx *gin.Context) {
 	var list []*pms.ProductAttributeCategory
-	global.Db.Debug().Model(&pms.ProductAttributeCategory{}).Preload("ProductAttributes").Find(&list)
+	global.Db.Model(&pms.ProductAttributeCategory{}).Preload("ProductAttributeList").Find(&list)
 	common.Success(ctx, list)
 }
 
+// UpdateById
+//
+//	@Summary	update by  id
+//	@Tags		attribute category
+//	@Param		id			path		int								true	"category id"
+//	@Param		category	body		pms.ProductAttributeCategory	true	"update category"
+//	@Success	200			{object}	common.Result{data=int}
+//	@Router		/productAttribute/category/update/{id} [post]
 func (a *attributeCategoryController) UpdateById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var ac pms.ProductAttributeCategory
@@ -70,12 +112,12 @@ func (a *attributeCategoryController) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-	tx := global.Db.Model(&ac).Where("id =?", id).Updates(ac)
+	tx := global.Db.Where("id =?", id).Updates(&ac)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
 	}
 
-	common.Success(ctx, ac)
+	common.Success(ctx, tx.RowsAffected)
 
 }
