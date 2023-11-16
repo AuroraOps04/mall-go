@@ -14,23 +14,23 @@ var AttributeCategoryController = &attributeCategoryController{}
 // Page
 //
 //	@Summary	list by page
-//	@Tags		attribute category
+//	@Tags		PmsProductAttributeCategoryController
 //	@Success	200	{object}	common.PageResult{data=[]pms.ProductAttributeCategory}
 //	@Router		/productAttribute/category/list [get]
 func (a *attributeCategoryController) Page(ctx *gin.Context) {
 	var categories []*pms.ProductAttributeCategory
-	tx := global.Db.Model(&pms.ProductAttributeCategory{}).Scopes(common.PreparePage(ctx))
+	tx := global.Db.Model(&pms.ProductAttributeCategory{})
 
 	var count int64
 	tx.Count(&count)
-	tx.Find(&categories)
+	tx.Scopes(common.PreparePage(ctx)).Find(&categories)
 	common.Page(ctx, categories, count)
 }
 
 // Create
 //
 //	@Summary	create attribute category
-//	@Tags		attribute category
+//	@Tags		PmsProductAttributeCategoryController
 //	@Accept		json
 //	@Param		name	formData	string	true	"category name"
 //	@Success	200		{object}	common.Result{data=int}
@@ -50,7 +50,7 @@ func (a *attributeCategoryController) Create(ctx *gin.Context) {
 // GetById
 //
 //	@Summary	get attribute category by id
-//	@Tags		attribute category
+//	@Tags		PmsProductAttributeCategoryController
 //	@Param		id	path		int	true	"category id"
 //	@Success	200	{object}	common.Result{data=pms.ProductAttributeCategory}
 //	@Router		/productAttribute/category/{id} [get]
@@ -68,7 +68,7 @@ func (a *attributeCategoryController) GetById(ctx *gin.Context) {
 // DeleteById
 //
 //	@Summary	Delete by  id
-//	@Tags		attribute category
+//	@Tags		PmsProductAttributeCategoryController
 //	@Param		id	path		int	true	"category id"
 //	@Success	200	{object}	common.Result{data=int}
 //	@Router		/productAttribute/category/delete/{id} [get]
@@ -86,7 +86,7 @@ func (a *attributeCategoryController) DeleteById(ctx *gin.Context) {
 // ListAllWithAttr
 //
 //	@Summary	select all and preload attribute list
-//	@Tags		attribute category
+//	@Tags		PmsProductAttributeCategoryController
 //	@Success	200	{object}	common.Result{data=pms.ProductAttributeCategory}
 //	@Router		/productAttribute/category/list/withAttr [get]
 func (a *attributeCategoryController) ListAllWithAttr(ctx *gin.Context) {
@@ -98,7 +98,7 @@ func (a *attributeCategoryController) ListAllWithAttr(ctx *gin.Context) {
 // UpdateById
 //
 //	@Summary	update by  id
-//	@Tags		attribute category
+//	@Tags		PmsProductAttributeCategoryController
 //	@Param		id			path		int								true	"category id"
 //	@Param		category	body		pms.ProductAttributeCategory	true	"update category"
 //	@Success	200			{object}	common.Result{data=int}

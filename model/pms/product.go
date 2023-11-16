@@ -39,7 +39,7 @@ type Product struct {
 	ProductAttributeCategory   ProductAttributeCategory `json:"productAttributeCategory"`
 	Name                       string                   `json:"name" gorm:"size:64;index:index_name"`
 	Pic                        string                   `json:"pic" gorm:"size:255"`
-	ProductSn                  string                   `json:"productSn" gorm:"size:64;uniqueIndex:index_product_sn"`
+	ProductSn                  string                   `json:"productSn" gorm:"size:64;index:index_product_sn"`
 	DeleteStatus               uint8                    `json:"deleteStatus" gorm:"size:1"`
 	PublishStatus              uint8                    `json:"publishStatus" gorm:"size:1"`
 	NewStatus                  uint8                    `json:"newStatus" gorm:"size:1"`
@@ -68,8 +68,8 @@ type Product struct {
 	DetailDesc                 string                   `json:"detailDesc" gorm:"type:text"`
 	DetailHtml                 string                   `json:"detailHtml" gorm:"type:text"`
 	DetailMobileHtml           string                   `json:"detailMobileHtml" gorm:"type:text"`
-	PromotionStartTime         time.Time                `json:"promotionStartTime" `
-	PromotionEndTime           time.Time                `json:"promotionEndTime"`
+	PromotionStartTime         *time.Time                `json:"promotionStartTime" `
+	PromotionEndTime           *time.Time                `json:"promotionEndTime"`
 	PromotionPerLimit          int                      `json:"promotionPerLimit"`
 	PromotionType              uint8                    `json:"promotionType" gorm:"size:1"`
 	ProductCategoryName        string                   `json:"productCategoryName" gorm:"size:255"`

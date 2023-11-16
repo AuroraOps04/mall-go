@@ -17,7 +17,7 @@ var BrandController = &brandController{}
 //
 //	@Param		id	path		int	true	"brand id"	default(1)
 //	@Success	200	{object}	common.Result{data=pms.Brand}
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //	@Router		/brand/{id} [get]
 func (c *brandController) GetById(ctx *gin.Context) {
 	b := pms.Brand{}
@@ -38,7 +38,7 @@ func (c *brandController) GetById(ctx *gin.Context) {
 
 // Create godoc
 //
-//	@Tags	brand
+//	@Tags	PmsBrandController
 //	@Param	brand	body	pms.Brand	true	"add brand"
 //	@Accept	json
 //	@Router	/brand/create [post]
@@ -65,7 +65,7 @@ func (c *brandController) Create(ctx *gin.Context) {
 //
 //	@Param		keyword		query	string	false	"keyword"
 //	@Param		showStatus	query	string	false	"keyword"	Enums(0, 1)
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //	@Success	200	{object}	common.PageResult{data=[]pms.Brand}
 //	@Router		/brand/list [get]
 func (c *brandController) Page(ctx *gin.Context) {
@@ -73,7 +73,7 @@ func (c *brandController) Page(ctx *gin.Context) {
 	showStatus := ctx.Query("showStatus")
 
 	var brands []*pms.Brand
-	tx := global.Db.Model(&pms.Brand{}).Scopes(common.PreparePage(ctx))
+	tx := global.Db.Model(&pms.Brand{})
 	if strings.TrimSpace(keyword) != "" {
 		likeStr := "%" + keyword + "%"
 		tx.Where("name like ?  ", likeStr)
@@ -83,14 +83,14 @@ func (c *brandController) Page(ctx *gin.Context) {
 	}
 	var count int64
 	tx.Count(&count)
-	tx.Find(&brands)
+	tx.Scopes(common.PreparePage(ctx)).Find(&brands)
 	common.Page(ctx, brands, count)
 }
 
 // DeleteById godoc
 //
 //	@Param		id	path	int	true	"brand id"
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //	@Success	200	{object}	common.Result{data=int}
 //	@Router		/brand/delete/{id} [get]
 func (c *brandController) DeleteById(ctx *gin.Context) {
@@ -107,7 +107,7 @@ func (c *brandController) DeleteById(ctx *gin.Context) {
 //
 //	@Param		showStatus	formData	string	true	"show status"			Enums(0,1)
 //	@Param		ids			formData	string	true	"id array join as ,"	"1,2"
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //
 //	@Success	200	{object}	common.Result{data=int}
 //
@@ -131,7 +131,7 @@ func (c *brandController) UpdateShowStatusBatch(ctx *gin.Context) {
 //
 //	@Param		factoryStatus	formData	string	true	"factory status"
 //	@Param		ids				formData	string	true	"id array join as ,"	"1,2"
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //
 //	@Success	200	{object}	common.Result{data=int}
 //
@@ -154,7 +154,7 @@ func (c *brandController) UpdateFactoryStatusBatch(ctx *gin.Context) {
 //	@Summary	Update Brand by id
 //	@Param		id		path	int			true	"id"
 //	@Param		brand	body	pms.Brand	true	"update brand"
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //
 //	@Success	200	{object}	common.Result{data=int}
 //
@@ -178,7 +178,7 @@ func (c *brandController) Update(ctx *gin.Context) {
 // ListAll godoc
 //
 //	@Summary	list all brand
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //	@Success	200	{object}	common.Result{data=[]pms.Brand}
 //	@Router		/brand/listAll [get]
 func (c *brandController) ListAll(ctx *gin.Context) {
@@ -191,7 +191,7 @@ func (c *brandController) ListAll(ctx *gin.Context) {
 //
 //	@Summary	delete brand batch by ids
 //	@Params		ids formData []string true
-//	@Tags		brand
+//	@Tags		PmsBrandController
 //	@Success	200	{object}	common.Result{data=[]pms.Brand}
 //	@Router		/brand/delete/batch [post]
 func (c *brandController) DeleteBatch(ctx *gin.Context) {

@@ -6,6 +6,8 @@ import (
 	_ "github.com/AuroraOps04/mall-go/docs"
 	"github.com/AuroraOps04/mall-go/global"
 	"github.com/AuroraOps04/mall-go/model/pms"
+
+	// "github.com/AuroraOps04/mall-go/model/pms"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -29,7 +31,7 @@ import (
 //	@externalDocs.description	OpenAPI
 //	@externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
-	dialector := mysql.Open("root:123456@tcp(10.0.0.10)/mallgo?charset=utf8mb4&parseTime=True&loc=Local")
+	dialector := mysql.Open("root:123456@tcp(10.0.0.10)/mall?charset=utf8mb4&parseTime=True&loc=Local")
 	//dialector := mysql.Open("reader:123456@tcp(192.168.59.10)/mall?charset=utf8mb4&parseTime=True&loc=Local")
 	global.Db, _ = gorm.Open(dialector, &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
@@ -45,7 +47,6 @@ func main() {
 	common.Route(adminGroup)
 
 	engine.Static("/static", "./static")
-
 	engine.Run(":4000")
 
 }

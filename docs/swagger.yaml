@@ -56,6 +56,173 @@ definitions:
       updatedAt:
         type: string
     type: object
+  pms.CategoryDto:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/pms.ProductCategory'
+        type: array
+      createdAt:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      keywords:
+        type: string
+      level:
+        type: integer
+      name:
+        type: string
+      navStatus:
+        type: integer
+      parent:
+        $ref: '#/definitions/pms.ProductCategory'
+      parentId:
+        type: integer
+      productAttributeIdList:
+        items:
+          type: integer
+        type: array
+      productAttributes:
+        items:
+          $ref: '#/definitions/pms.ProductAttribute'
+        type: array
+      productCount:
+        type: integer
+      productUnit:
+        type: string
+      showStatus:
+        type: integer
+      sort:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  pms.FeightTemplate:
+    properties:
+      charge_type:
+        type: integer
+      continue_fee:
+        type: number
+      continue_weight:
+        type: number
+      createdAt:
+        type: string
+      dest:
+        type: string
+      first_fee:
+        type: number
+      first_weight:
+        type: number
+      id:
+        type: integer
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  pms.Product:
+    properties:
+      albumPics:
+        type: string
+      brand:
+        $ref: '#/definitions/pms.Brand'
+      brandId:
+        type: integer
+      brandName:
+        type: string
+      createdAt:
+        type: string
+      deleteStatus:
+        type: integer
+      description:
+        type: string
+      detailDesc:
+        type: string
+      detailHtml:
+        type: string
+      detailMobileHtml:
+        type: string
+      detailTitle:
+        type: string
+      feightTemplate:
+        $ref: '#/definitions/pms.FeightTemplate'
+      feightTemplateId:
+        type: integer
+      giftGrowth:
+        type: integer
+      giftPoint:
+        type: integer
+      id:
+        type: integer
+      keywords:
+        type: string
+      lowStock:
+        type: integer
+      name:
+        type: string
+      newStatus:
+        type: integer
+      note:
+        type: string
+      originalPrice:
+        type: number
+      pic:
+        type: string
+      previewStatus:
+        type: integer
+      price:
+        type: number
+      productAttributeCategory:
+        $ref: '#/definitions/pms.ProductAttributeCategory'
+      productAttributeCategoryId:
+        type: integer
+      productCategory:
+        $ref: '#/definitions/pms.ProductCategory'
+      productCategoryId:
+        type: integer
+      productCategoryName:
+        type: string
+      productSn:
+        type: string
+      promotionEndTime:
+        type: string
+      promotionPerLimit:
+        type: integer
+      promotionPrice:
+        type: number
+      promotionStartTime:
+        type: string
+      promotionType:
+        type: integer
+      publishStatus:
+        type: integer
+      recommandStatus:
+        type: integer
+      sale:
+        type: integer
+      serviceIds:
+        type: string
+      sort:
+        type: integer
+      stock:
+        type: integer
+      subTitle:
+        type: string
+      unit:
+        type: string
+      updatedAt:
+        type: string
+      usePointLimit:
+        type: integer
+      verifyStatus:
+        type: integer
+      weight:
+        type: number
+    type: object
   pms.ProductAttribute:
     properties:
       attributeValues:
@@ -210,7 +377,7 @@ paths:
                   $ref: '#/definitions/pms.Brand'
               type: object
       tags:
-      - brand
+      - PmsBrandController
   /brand/create:
     post:
       consumes:
@@ -224,7 +391,7 @@ paths:
           $ref: '#/definitions/pms.Brand'
       responses: {}
       tags:
-      - brand
+      - PmsBrandController
   /brand/delete/{id}:
     get:
       parameters:
@@ -244,7 +411,7 @@ paths:
                   type: integer
               type: object
       tags:
-      - brand
+      - PmsBrandController
   /brand/delete/batch:
     post:
       responses:
@@ -261,7 +428,7 @@ paths:
               type: object
       summary: delete brand batch by ids
       tags:
-      - brand
+      - PmsBrandController
   /brand/list:
     get:
       parameters:
@@ -289,7 +456,7 @@ paths:
                   type: array
               type: object
       tags:
-      - brand
+      - PmsBrandController
   /brand/listAll:
     get:
       responses:
@@ -306,7 +473,7 @@ paths:
               type: object
       summary: list all brand
       tags:
-      - brand
+      - PmsBrandController
   /brand/update/{id}:
     post:
       parameters:
@@ -333,7 +500,7 @@ paths:
               type: object
       summary: Update Brand by id
       tags:
-      - brand
+      - PmsBrandController
   /brand/update/factoryStatus:
     post:
       parameters:
@@ -359,7 +526,7 @@ paths:
               type: object
       summary: update brand show status batch
       tags:
-      - brand
+      - PmsBrandController
   /brand/update/showStatus:
     post:
       parameters:
@@ -387,7 +554,65 @@ paths:
                   type: integer
               type: object
       tags:
-      - brand
+      - PmsBrandController
+  /product/create:
+    post:
+      parameters:
+      - description: add product
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/pms.Product'
+      responses: {}
+      summary: Create prodcut api
+      tags:
+      - PmsProductController
+  /product/list:
+    get:
+      parameters:
+      - description: brand id
+        in: query
+        name: brandId
+        type: integer
+      - description: keyword
+        in: query
+        name: keyword
+        type: string
+      - default: 1
+        description: page num
+        in: query
+        name: pageNum
+        type: integer
+      - default: 1
+        description: page size
+        in: query
+        name: pageSize
+        type: integer
+      - description: product category id
+        in: query
+        name: productCategoryId
+        type: integer
+      - description: product sn
+        in: query
+        name: productSN
+        type: string
+      - description: publish status
+        in: query
+        name: publishStatus
+        type: integer
+      - description: verify status
+        in: query
+        name: verifyStatus
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.PageResult'
+      summary: Page
+      tags:
+      - PmsProductController
   /productAttribute/{id}:
     get:
       parameters:
@@ -410,7 +635,7 @@ paths:
               type: object
       summary: get attribute by id
       tags:
-      - attribute
+      - PmsProductAttributeController
     post:
       parameters:
       - description: attribute id
@@ -436,7 +661,7 @@ paths:
               type: object
       summary: update attribute by id
       tags:
-      - attribute
+      - PmsProductAttributeController
   /productAttribute/attrInfo/{productCategoryId}:
     get:
       parameters:
@@ -459,7 +684,7 @@ paths:
               type: object
       summary: GetInfoByProductCategoryId
       tags:
-      - attribute
+      - PmsProductAttributeController
   /productAttribute/category/{id}:
     get:
       parameters:
@@ -480,7 +705,7 @@ paths:
               type: object
       summary: get attribute category by id
       tags:
-      - attribute category
+      - PmsProductAttributeCategoryController
   /productAttribute/category/create:
     post:
       consumes:
@@ -503,7 +728,7 @@ paths:
               type: object
       summary: create attribute category
       tags:
-      - attribute category
+      - PmsProductAttributeCategoryController
   /productAttribute/category/delete/{id}:
     get:
       parameters:
@@ -524,7 +749,7 @@ paths:
               type: object
       summary: Delete by  id
       tags:
-      - attribute category
+      - PmsProductAttributeCategoryController
   /productAttribute/category/list:
     get:
       responses:
@@ -541,7 +766,7 @@ paths:
               type: object
       summary: list by page
       tags:
-      - attribute category
+      - PmsProductAttributeCategoryController
   /productAttribute/category/list/withAttr:
     get:
       responses:
@@ -556,7 +781,7 @@ paths:
               type: object
       summary: select all and preload attribute list
       tags:
-      - attribute category
+      - PmsProductAttributeCategoryController
   /productAttribute/category/update/{id}:
     post:
       parameters:
@@ -583,7 +808,7 @@ paths:
               type: object
       summary: update by  id
       tags:
-      - attribute category
+      - PmsProductAttributeCategoryController
   /productAttribute/create:
     post:
       parameters:
@@ -605,13 +830,13 @@ paths:
               type: object
       summary: create attribute
       tags:
-      - attribute
+      - PmsProductAttributeController
   /productAttribute/delete:
     post:
       responses: {}
       summary: Delete Batch productAttribute
       tags:
-      - attribute
+      - PmsProductAttributeController
       - uncompleted
   /productAttribute/list/{cId}:
     get:
@@ -640,7 +865,7 @@ paths:
               type: object
       summary: list by page
       tags:
-      - attribute
+      - PmsProductAttributeController
   /productCategory/{id}:
     get:
       parameters:
@@ -661,7 +886,7 @@ paths:
               type: object
       summary: get product category by id
       tags:
-      - product category
+      - PmsProductCategoryController
   /productCategory/create:
     post:
       consumes:
@@ -672,7 +897,7 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/pms.ProductCategory'
+          $ref: '#/definitions/pms.CategoryDto'
       responses:
         "200":
           description: OK
@@ -685,7 +910,7 @@ paths:
               type: object
       summary: create product category
       tags:
-      - product category
+      - PmsProductCategoryController
   /productCategory/delete/{id}:
     post:
       parameters:
@@ -706,7 +931,7 @@ paths:
               type: object
       summary: remove category by id
       tags:
-      - product category
+      - PmsProductCategoryController
   /productCategory/list/{parentId}:
     get:
       parameters:
@@ -729,7 +954,7 @@ paths:
               type: object
       summary: product category page view
       tags:
-      - product category
+      - PmsProductCategoryController
   /productCategory/list/withChildren:
     get:
       responses:
@@ -746,7 +971,7 @@ paths:
               type: object
       summary: list all category that parentId equals zero and preload children
       tags:
-      - product category
+      - PmsProductCategoryController
   /productCategory/update/{id}:
     post:
       parameters:
@@ -767,7 +992,7 @@ paths:
               type: object
       summary: update category by id
       tags:
-      - product category
+      - PmsProductCategoryController
   /productCategory/update/navStatus:
     post:
       parameters:
@@ -775,13 +1000,13 @@ paths:
         enum:
         - 0
         - 1
-        in: query
+        in: formData
         name: navStatus
         required: true
         type: integer
       - collectionFormat: csv
         description: id list
-        in: query
+        in: formData
         items:
           type: integer
         name: ids
@@ -799,8 +1024,7 @@ paths:
               type: object
       summary: update category's nav status when id in ids
       tags:
-      - product category
-      - uncompleted
+      - PmsProductCategoryController
   /productCategory/update/showStatus:
     post:
       parameters:
@@ -808,13 +1032,13 @@ paths:
         enum:
         - 0
         - 1
-        in: query
+        in: formData
         name: showStatus
         required: true
         type: integer
       - collectionFormat: csv
         description: id list
-        in: query
+        in: formData
         items:
           type: integer
         name: ids
@@ -832,6 +1056,5 @@ paths:
               type: object
       summary: update category's show status when id in ids
       tags:
-      - product category
-      - uncompleted
+      - PmsProductCategoryController
 swagger: "2.0"

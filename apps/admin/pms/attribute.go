@@ -16,7 +16,7 @@ var ProductAttributeController = &productAttributeController{}
 // GetById
 //
 //	@Summary	get attribute by id
-//	@Tags		attribute
+//	@Tags		PmsProductAttributeController
 //	@Produce	json
 //	@Param		id	path		int	true	"attribute id"
 //	@Success	200	{object}	common.Result{data=pms.ProductAttribute}
@@ -35,8 +35,8 @@ func (p *productAttributeController) GetById(ctx *gin.Context) {
 // GetInfoByProductCategoryId
 //
 //	@Summary	GetInfoByProductCategoryId
-//	@Param		productCategoryId	path	int	true "product category id"
-//	@Tags		attribute
+//	@Param		productCategoryId	path	int	true	"product category id"
+//	@Tags		PmsProductAttributeController
 //	@Success	200	{object}	common.Result{data=[]dto.AttrInfoDto}
 //	@Router		/productAttribute/attrInfo/{productCategoryId} [get]
 func (p *productAttributeController) GetInfoByProductCategoryId(ctx *gin.Context) {
@@ -47,7 +47,8 @@ func (p *productAttributeController) GetInfoByProductCategoryId(ctx *gin.Context
 				from pms_product_attribute ppa
         		 left join pms_product_category_attribute_relation ppcar on ppcar.product_attribute_id = ppa.id
 				where ppcar.product_category_id = ?
-				`, productCategoryId).Scan(&dtoList)
+				`, productCategoryId).
+		Scan(&dtoList)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -59,8 +60,8 @@ func (p *productAttributeController) GetInfoByProductCategoryId(ctx *gin.Context
 // Create
 //
 //	@Summary	create attribute
-//	@Param		attribute	body	pms.ProductAttribute	true "add attribute"
-//	@Tags		attribute
+//	@Param		attribute	body	pms.ProductAttribute	true	"add attribute"
+//	@Tags		PmsProductAttributeController
 //	@Success	200	{object}	common.Result{data=pms.ProductAttribute}
 //	@Router		/productAttribute/create [post]
 func (p *productAttributeController) Create(ctx *gin.Context) {
@@ -80,7 +81,7 @@ func (p *productAttributeController) Create(ctx *gin.Context) {
 // DeleteBatch
 //
 //	@Summary	Delete Batch productAttribute
-//	@Tags		attribute, uncompleted
+//	@Tags		PmsProductAttributeController,uncompleted
 //	@Router		/productAttribute/delete [post]
 func (p *productAttributeController) DeleteBatch(ctx *gin.Context) {
 
@@ -89,7 +90,7 @@ func (p *productAttributeController) DeleteBatch(ctx *gin.Context) {
 // PageByProductAttributeCategoryId
 //
 //	@Summary	list by page
-//	@Tags		attribute
+//	@Tags		PmsProductAttributeController
 //	@Param		cId		path		int	true	"product attribute category id"
 //	@Param		type	query		int	true	"type"
 //	@Success	200		{object}	common.PageResult{data=[]pms.ProductAttribute}
@@ -102,12 +103,12 @@ func (p *productAttributeController) PageByProductAttributeCategoryId(ctx *gin.C
 
 	var as []*pms.ProductAttribute
 
-	tx := global.Db.Model(&pms.ProductAttribute{}).Scopes(common.PreparePage(ctx)).
+	tx := global.Db.Model(&pms.ProductAttribute{}).
 		Where("type = ? and product_attribute_category_id = ?", aType, cId)
 
 	var count int64
 	tx.Count(&count)
-	tx.Find(&as)
+	tx = tx.Scopes(common.PreparePage(ctx)).Find(&as)
 
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
@@ -120,9 +121,9 @@ func (p *productAttributeController) PageByProductAttributeCategoryId(ctx *gin.C
 // UpdateById
 //
 //	@Summary	update attribute by id
-//	@Tags		attribute
+//	@Tags		PmsProductAttributeController
 //	@Param		id		path		int						true	"attribute id"
-//	@Param		attr	body		pms.ProductAttribute	true "update attribute "
+//	@Param		attr	body		pms.ProductAttribute	true	"update attribute "
 //	@Success	200		{object}	common.Result{data=int}
 //	@Router		/productAttribute/{id} [post]
 func (p *productAttributeController) UpdateById(ctx *gin.Context) {

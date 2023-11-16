@@ -56,4 +56,9 @@ func Route(engine *gin.RouterGroup) {
 		categoryGroup.POST("/update/showStatus", ProductCategoryController.UpdateShowStatus)
 	}
 
+	productGroup := engine.Group("/product")
+	{
+		productGroup.GET("/list", ProductController.Page)
+		productGroup.POST("/create", ProductController.Create)
+	}
 }

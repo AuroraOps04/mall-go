@@ -29,7 +29,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "parameters": [
                     {
@@ -48,7 +48,7 @@ const docTemplate = `{
         "/brand/delete/batch": {
             "post": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "summary": "delete brand batch by ids",
                 "responses": {
@@ -79,7 +79,7 @@ const docTemplate = `{
         "/brand/delete/{id}": {
             "get": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "parameters": [
                     {
@@ -115,7 +115,7 @@ const docTemplate = `{
         "/brand/list": {
             "get": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "parameters": [
                     {
@@ -163,7 +163,7 @@ const docTemplate = `{
         "/brand/listAll": {
             "get": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "summary": "list all brand",
                 "responses": {
@@ -194,7 +194,7 @@ const docTemplate = `{
         "/brand/update/factoryStatus": {
             "post": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "summary": "update brand show status batch",
                 "parameters": [
@@ -238,7 +238,7 @@ const docTemplate = `{
         "/brand/update/showStatus": {
             "post": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "parameters": [
                     {
@@ -285,7 +285,7 @@ const docTemplate = `{
         "/brand/update/{id}": {
             "post": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "summary": "Update Brand by id",
                 "parameters": [
@@ -331,7 +331,7 @@ const docTemplate = `{
         "/brand/{id}": {
             "get": {
                 "tags": [
-                    "brand"
+                    "PmsBrandController"
                 ],
                 "parameters": [
                     {
@@ -365,10 +365,98 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/create": {
+            "post": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "Create prodcut api",
+                "parameters": [
+                    {
+                        "description": "add product",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pms.Product"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/product/list": {
+            "get": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "Page",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "brand id",
+                        "name": "brandId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "keyword",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "page num",
+                        "name": "pageNum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "page size",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "product category id",
+                        "name": "productCategoryId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "product sn",
+                        "name": "productSN",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "publish status",
+                        "name": "publishStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "verify status",
+                        "name": "verifyStatus",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.PageResult"
+                        }
+                    }
+                }
+            }
+        },
         "/productAttribute/attrInfo/{productCategoryId}": {
             "get": {
                 "tags": [
-                    "attribute"
+                    "PmsProductAttributeController"
                 ],
                 "summary": "GetInfoByProductCategoryId",
                 "parameters": [
@@ -411,7 +499,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "attribute category"
+                    "PmsProductAttributeCategoryController"
                 ],
                 "summary": "create attribute category",
                 "parameters": [
@@ -448,7 +536,7 @@ const docTemplate = `{
         "/productAttribute/category/delete/{id}": {
             "get": {
                 "tags": [
-                    "attribute category"
+                    "PmsProductAttributeCategoryController"
                 ],
                 "summary": "Delete by  id",
                 "parameters": [
@@ -485,7 +573,7 @@ const docTemplate = `{
         "/productAttribute/category/list": {
             "get": {
                 "tags": [
-                    "attribute category"
+                    "PmsProductAttributeCategoryController"
                 ],
                 "summary": "list by page",
                 "responses": {
@@ -516,7 +604,7 @@ const docTemplate = `{
         "/productAttribute/category/list/withAttr": {
             "get": {
                 "tags": [
-                    "attribute category"
+                    "PmsProductAttributeCategoryController"
                 ],
                 "summary": "select all and preload attribute list",
                 "responses": {
@@ -544,7 +632,7 @@ const docTemplate = `{
         "/productAttribute/category/update/{id}": {
             "post": {
                 "tags": [
-                    "attribute category"
+                    "PmsProductAttributeCategoryController"
                 ],
                 "summary": "update by  id",
                 "parameters": [
@@ -590,7 +678,7 @@ const docTemplate = `{
         "/productAttribute/category/{id}": {
             "get": {
                 "tags": [
-                    "attribute category"
+                    "PmsProductAttributeCategoryController"
                 ],
                 "summary": "get attribute category by id",
                 "parameters": [
@@ -627,7 +715,7 @@ const docTemplate = `{
         "/productAttribute/create": {
             "post": {
                 "tags": [
-                    "attribute"
+                    "PmsProductAttributeController"
                 ],
                 "summary": "create attribute",
                 "parameters": [
@@ -666,7 +754,7 @@ const docTemplate = `{
         "/productAttribute/delete": {
             "post": {
                 "tags": [
-                    "attribute",
+                    "PmsProductAttributeController",
                     "uncompleted"
                 ],
                 "summary": "Delete Batch productAttribute",
@@ -676,7 +764,7 @@ const docTemplate = `{
         "/productAttribute/list/{cId}": {
             "get": {
                 "tags": [
-                    "attribute"
+                    "PmsProductAttributeController"
                 ],
                 "summary": "list by page",
                 "parameters": [
@@ -726,7 +814,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "attribute"
+                    "PmsProductAttributeController"
                 ],
                 "summary": "get attribute by id",
                 "parameters": [
@@ -761,7 +849,7 @@ const docTemplate = `{
             },
             "post": {
                 "tags": [
-                    "attribute"
+                    "PmsProductAttributeController"
                 ],
                 "summary": "update attribute by id",
                 "parameters": [
@@ -810,7 +898,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "product category"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "create product category",
                 "parameters": [
@@ -820,7 +908,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pms.ProductCategory"
+                            "$ref": "#/definitions/pms.CategoryDto"
                         }
                     }
                 ],
@@ -849,7 +937,7 @@ const docTemplate = `{
         "/productCategory/delete/{id}": {
             "post": {
                 "tags": [
-                    "product category"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "remove category by id",
                 "parameters": [
@@ -886,7 +974,7 @@ const docTemplate = `{
         "/productCategory/list/withChildren": {
             "get": {
                 "tags": [
-                    "product category"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "list all category that parentId equals zero and preload children",
                 "responses": {
@@ -917,7 +1005,7 @@ const docTemplate = `{
         "/productCategory/list/{parentId}": {
             "get": {
                 "tags": [
-                    "product category"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "product category page view",
                 "parameters": [
@@ -957,8 +1045,7 @@ const docTemplate = `{
         "/productCategory/update/navStatus": {
             "post": {
                 "tags": [
-                    "product category",
-                    "uncompleted"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "update category's nav status when id in ids",
                 "parameters": [
@@ -970,7 +1057,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "nav status",
                         "name": "navStatus",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     },
                     {
@@ -981,7 +1068,7 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "id list",
                         "name": "ids",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -1010,8 +1097,7 @@ const docTemplate = `{
         "/productCategory/update/showStatus": {
             "post": {
                 "tags": [
-                    "product category",
-                    "uncompleted"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "update category's show status when id in ids",
                 "parameters": [
@@ -1023,7 +1109,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "nav status",
                         "name": "showStatus",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     },
                     {
@@ -1034,7 +1120,7 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "id list",
                         "name": "ids",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -1063,7 +1149,7 @@ const docTemplate = `{
         "/productCategory/update/{id}": {
             "post": {
                 "tags": [
-                    "product category"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "update category by id",
                 "parameters": [
@@ -1100,7 +1186,7 @@ const docTemplate = `{
         "/productCategory/{id}": {
             "get": {
                 "tags": [
-                    "product category"
+                    "PmsProductCategoryController"
                 ],
                 "summary": "get product category by id",
                 "parameters": [
@@ -1218,6 +1304,258 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "pms.CategoryDto": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pms.ProductCategory"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "keywords": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "navStatus": {
+                    "type": "integer"
+                },
+                "parent": {
+                    "$ref": "#/definitions/pms.ProductCategory"
+                },
+                "parentId": {
+                    "type": "integer"
+                },
+                "productAttributeIdList": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "productAttributes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pms.ProductAttribute"
+                    }
+                },
+                "productCount": {
+                    "type": "integer"
+                },
+                "productUnit": {
+                    "type": "string"
+                },
+                "showStatus": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "pms.FeightTemplate": {
+            "type": "object",
+            "properties": {
+                "charge_type": {
+                    "type": "integer"
+                },
+                "continue_fee": {
+                    "type": "number"
+                },
+                "continue_weight": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "dest": {
+                    "type": "string"
+                },
+                "first_fee": {
+                    "type": "number"
+                },
+                "first_weight": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "pms.Product": {
+            "type": "object",
+            "properties": {
+                "albumPics": {
+                    "type": "string"
+                },
+                "brand": {
+                    "$ref": "#/definitions/pms.Brand"
+                },
+                "brandId": {
+                    "type": "integer"
+                },
+                "brandName": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deleteStatus": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "detailDesc": {
+                    "type": "string"
+                },
+                "detailHtml": {
+                    "type": "string"
+                },
+                "detailMobileHtml": {
+                    "type": "string"
+                },
+                "detailTitle": {
+                    "type": "string"
+                },
+                "feightTemplate": {
+                    "$ref": "#/definitions/pms.FeightTemplate"
+                },
+                "feightTemplateId": {
+                    "type": "integer"
+                },
+                "giftGrowth": {
+                    "type": "integer"
+                },
+                "giftPoint": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "keywords": {
+                    "type": "string"
+                },
+                "lowStock": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "newStatus": {
+                    "type": "integer"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "originalPrice": {
+                    "type": "number"
+                },
+                "pic": {
+                    "type": "string"
+                },
+                "previewStatus": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "productAttributeCategory": {
+                    "$ref": "#/definitions/pms.ProductAttributeCategory"
+                },
+                "productAttributeCategoryId": {
+                    "type": "integer"
+                },
+                "productCategory": {
+                    "$ref": "#/definitions/pms.ProductCategory"
+                },
+                "productCategoryId": {
+                    "type": "integer"
+                },
+                "productCategoryName": {
+                    "type": "string"
+                },
+                "productSn": {
+                    "type": "string"
+                },
+                "promotionEndTime": {
+                    "type": "string"
+                },
+                "promotionPerLimit": {
+                    "type": "integer"
+                },
+                "promotionPrice": {
+                    "type": "number"
+                },
+                "promotionStartTime": {
+                    "type": "string"
+                },
+                "promotionType": {
+                    "type": "integer"
+                },
+                "publishStatus": {
+                    "type": "integer"
+                },
+                "recommandStatus": {
+                    "type": "integer"
+                },
+                "sale": {
+                    "type": "integer"
+                },
+                "serviceIds": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "subTitle": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "usePointLimit": {
+                    "type": "integer"
+                },
+                "verifyStatus": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
                 }
             }
         },

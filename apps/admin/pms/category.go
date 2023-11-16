@@ -19,7 +19,7 @@ var ProductCategoryController = &productCategoryController{}
 // ListAllWithChildren
 //
 //	@Summary	list all category that parentId equals zero and preload children
-//	@Tags		product category
+//	@Tags		PmsProductCategoryController
 //	@Success	200	{object}	common.Result{data=[]pms.ProductCategory}
 //	@Router		/productCategory/list/withChildren [get]
 func (p *productCategoryController) ListAllWithChildren(ctx *gin.Context) {
@@ -33,10 +33,10 @@ func (p *productCategoryController) ListAllWithChildren(ctx *gin.Context) {
 // Create
 //
 //	@Summary	create product category
-//	@Tags		product category
+//	@Tags		PmsProductCategoryController
 //	@Accept		json
-//	@Param		category				body		dto.CategoryDto	true	"add product category"
-//	@Success	200						{object}	common.Result{data=pms.ProductCategory}
+//	@Param		category	body		dto.CategoryDto	true	"add product category"
+//	@Success	200			{object}	common.Result{data=pms.ProductCategory}
 //	@Router		/productCategory/create [post]
 func (p *productCategoryController) Create(ctx *gin.Context) {
 	var cDto dto.CategoryDto
@@ -64,7 +64,7 @@ func (p *productCategoryController) Create(ctx *gin.Context) {
 // Page
 //
 //	@Summary	product category page view
-//	@Tags		product category
+//	@Tags		PmsProductCategoryController
 //	@Param		parentId	path		int	true	"parent id"
 //	@Success	200			{object}	common.PageResult{data=[]pms.ProductCategory}
 //	@Router		/productCategory/list/{parentId} [get]
@@ -72,11 +72,12 @@ func (p *productCategoryController) Page(ctx *gin.Context) {
 	parentId := ctx.Param("parentId")
 	var cs []*pms.ProductCategory
 	tx := global.Db.Model(&pms.ProductCategory{}).
-		Scopes(common.PreparePage(ctx)).
 		Where("parent_id = ?", parentId)
 	var count int64
 	tx.Count(&count)
-	tx.Find(&cs)
+	tx = tx.
+		Scopes(common.PreparePage(ctx)).
+		Find(&cs)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -87,7 +88,7 @@ func (p *productCategoryController) Page(ctx *gin.Context) {
 // GetById
 //
 //	@Summary	get product category by id
-//	@Tags		product category
+//	@Tags		PmsProductCategoryController
 //	@Param		id	path		int	true	"category id"
 //	@Success	200	{object}	common.Result{data=pms.ProductCategory}
 //	@Router		/productCategory/{id} [get]
@@ -105,7 +106,7 @@ func (p *productCategoryController) GetById(ctx *gin.Context) {
 // DeleteById
 //
 //	@Summary	remove category by id
-//	@Tags		product category
+//	@Tags		PmsProductCategoryController
 //	@Param		id	path		int	true	"wanted remove category id"
 //	@Success	200	{object}	common.Result{data=int}
 //	@Router		/productCategory/delete/{id} [post]
@@ -122,7 +123,7 @@ func (p *productCategoryController) DeleteById(ctx *gin.Context) {
 // UpdateById
 //
 //	@Summary	update category by id
-//	@Tags		product category
+//	@Tags		PmsProductCategoryController
 //	@Param		id	path		int	true	"wanted update category's id"
 //	@Success	200	{object}	common.Result{data=int}
 //	@Router		/productCategory/update/{id} [post]
@@ -164,9 +165,9 @@ func (p *productCategoryController) UpdateById(ctx *gin.Context) {
 // UpdateNavStatus
 //
 //	@Summary	update category's nav status when id in ids
-//	@Tags		product category
-//	@Param		navStatus	form		int		true	"nav status"	Enums(0,1)
-//	@Param		ids			form		[]int	true	"id list"
+//	@Tags		PmsProductCategoryController
+//	@Param		navStatus	formData	int		true	"nav status"	Enums(0,1)
+//	@Param		ids			formData	[]int	true	"id list"
 //	@Success	200			{object}	common.Result{data=int}
 //	@Router		/productCategory/update/navStatus  [post]
 func (p *productCategoryController) UpdateNavStatus(ctx *gin.Context) {
@@ -186,9 +187,9 @@ func (p *productCategoryController) UpdateNavStatus(ctx *gin.Context) {
 // UpdateShowStatus
 //
 //	@Summary	update category's show status when id in ids
-//	@Tags		product category
-//	@Param		showStatus	form		int		true	"nav status"	Enums(0,1)
-//	@Param		ids			form		[]int	true	"id list"
+//	@Tags		PmsProductCategoryController
+//	@Param		showStatus	formData	int		true	"nav status"	Enums(0,1)
+//	@Param		ids			formData	[]int	true	"id list"
 //	@Success	200			{object}	common.Result{data=int}
 //	@Router		/productCategory/update/showStatus  [post]
 func (p *productCategoryController) UpdateShowStatus(ctx *gin.Context) {
