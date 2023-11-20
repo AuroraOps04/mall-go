@@ -193,7 +193,7 @@ definitions:
       promotionPerLimit:
         type: integer
       promotionPrice:
-        type: number
+        type: string
       promotionStartTime:
         type: string
       promotionType:
@@ -564,7 +564,16 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/pms.Product'
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
       summary: Create prodcut api
       tags:
       - PmsProductController
@@ -611,6 +620,161 @@ paths:
           schema:
             $ref: '#/definitions/common.PageResult'
       summary: Page
+      tags:
+      - PmsProductController
+  /product/update/deleteStatus:
+    post:
+      parameters:
+      - description: id list
+        in: query
+        name: ids
+        required: true
+        type: string
+      - description: deleteStatus
+        enum:
+        - 0
+        - 1
+        in: query
+        name: deleteStatus
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: updateProductDeleteStatus
+      tags:
+      - PmsProductController
+  /product/update/newStatus:
+    post:
+      parameters:
+      - description: id list
+        in: query
+        name: ids
+        required: true
+        type: string
+      - description: newStatus
+        enum:
+        - "0"
+        - "1"
+        in: query
+        name: newStatus
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: updateProductNewStatus
+      tags:
+      - PmsProductController
+  /product/update/publishStatus:
+    post:
+      parameters:
+      - description: id list
+        in: query
+        name: ids
+        required: true
+        type: string
+      - description: publishStatus
+        enum:
+        - 0
+        - 1
+        in: query
+        name: publishStatus
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: updateProductPublishStatus
+      tags:
+      - PmsProductController
+  /product/update/recommendStatus:
+    post:
+      parameters:
+      - description: id list
+        in: query
+        name: ids
+        required: true
+        type: string
+      - description: recommendStatus
+        enum:
+        - 0
+        - 1
+        in: query
+        name: recommendStatus
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: updateProductRecommendStatus
+      tags:
+      - PmsProductController
+  /product/update/verifyStatus:
+    post:
+      parameters:
+      - description: id list
+        in: query
+        name: ids
+        required: true
+        type: string
+      - description: deleteStatus
+        enum:
+        - 0
+        - 1
+        in: query
+        name: deleteStatus
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: updateProductVerifyStatus
+      tags:
+      - PmsProductController
+  /product/updateInfo/{id}:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      summary: getProductInfoForUpdate
       tags:
       - PmsProductController
   /productAttribute/{id}:

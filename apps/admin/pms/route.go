@@ -60,5 +60,7 @@ func Route(engine *gin.RouterGroup) {
 	{
 		productGroup.GET("/list", ProductController.Page)
 		productGroup.POST("/create", ProductController.Create)
+		productGroup.POST("/update/newStatus", ProductController.UpdateNewStatus)
+		productGroup.POST("/update/publishStatus", ProductController.UpdatePublishStatus)
 	}
 }

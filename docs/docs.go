@@ -382,7 +382,26 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/product/list": {
@@ -448,6 +467,262 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/common.PageResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/update/deleteStatus": {
+            "post": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "updateProductDeleteStatus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id list",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "type": "integer",
+                        "description": "deleteStatus",
+                        "name": "deleteStatus",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/product/update/newStatus": {
+            "post": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "updateProductNewStatus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id list",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "0",
+                            "1"
+                        ],
+                        "type": "string",
+                        "description": "newStatus",
+                        "name": "newStatus",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/product/update/publishStatus": {
+            "post": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "updateProductPublishStatus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id list",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "type": "integer",
+                        "description": "publishStatus",
+                        "name": "publishStatus",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/product/update/recommendStatus": {
+            "post": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "updateProductRecommendStatus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id list",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "type": "integer",
+                        "description": "recommendStatus",
+                        "name": "recommendStatus",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/product/update/verifyStatus": {
+            "post": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "updateProductVerifyStatus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id list",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "type": "integer",
+                        "description": "deleteStatus",
+                        "name": "deleteStatus",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/product/updateInfo/{id}": {
+            "get": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "getProductInfoForUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
                         }
                     }
                 }
@@ -1513,7 +1788,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "promotionPrice": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "promotionStartTime": {
                     "type": "string"
