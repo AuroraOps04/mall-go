@@ -31,7 +31,6 @@ func (l LikeNumberInt64) Value() (driver.Value, error) {
 	return int64(l), nil
 }
 
-// FIX: should be []uint8
 func (l *LikeNumberInt64) Scan(src any) error {
 	switch v := src.(type) {
 	case int64:
@@ -71,7 +70,6 @@ func (l LikeNumberFloat64) Value() (driver.Value, error) {
 	return float64(l), nil
 }
 
-// FIX: should be []uint8
 func (l *LikeNumberFloat64) Scan(src any) error {
 	switch v := src.(type) {
 	case float64:

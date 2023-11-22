@@ -124,6 +124,23 @@ definitions:
       updatedAt:
         type: string
     type: object
+  pms.MemberPrice:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      member_level_id:
+        type: integer
+      member_level_name:
+        type: string
+      member_price:
+        type: number
+      product_id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   pms.Product:
     properties:
       albumPics:
@@ -162,6 +179,10 @@ definitions:
         type: string
       lowStock:
         type: integer
+      memberPriceList:
+        items:
+          $ref: '#/definitions/pms.MemberPrice'
+        type: array
       name:
         type: string
       newStatus:
@@ -180,12 +201,24 @@ definitions:
         $ref: '#/definitions/pms.ProductAttributeCategory'
       productAttributeCategoryId:
         type: integer
+      productAttributeValueList:
+        items:
+          $ref: '#/definitions/pms.ProductAttributeValue'
+        type: array
       productCategory:
         $ref: '#/definitions/pms.ProductCategory'
       productCategoryId:
         type: integer
       productCategoryName:
         type: string
+      productFullReductionList:
+        items:
+          $ref: '#/definitions/pms.ProductFullReduction'
+        type: array
+      productLadderList:
+        items:
+          $ref: '#/definitions/pms.ProductLadder'
+        type: array
       productSn:
         type: string
       promotionEndTime:
@@ -206,6 +239,10 @@ definitions:
         type: integer
       serviceIds:
         type: string
+      skuStockList:
+        items:
+          $ref: '#/definitions/pms.SkuStock'
+        type: array
       sort:
         type: integer
       stock:
@@ -337,6 +374,75 @@ definitions:
       showStatus:
         type: integer
       sort:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  pms.ProductFullReduction:
+    properties:
+      createdAt:
+        type: string
+      fullPrice:
+        type: number
+      id:
+        type: integer
+      product:
+        $ref: '#/definitions/pms.Product'
+      productId:
+        type: integer
+      reducePrice:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  pms.ProductLadder:
+    properties:
+      count:
+        type: integer
+      createdAt:
+        type: string
+      discount:
+        type: number
+      id:
+        type: integer
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/pms.Product'
+      productId:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  pms.SkuStock:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      lock_stock:
+        type: integer
+      low_stock:
+        type: integer
+      pic:
+        type: string
+      price:
+        type: number
+      product_id:
+        type: integer
+      promotion_price:
+        type: number
+      sale:
+        type: integer
+      sku_code:
+        type: string
+      sp1:
+        type: string
+      sp2:
+        type: string
+      sp3:
+        type: string
+      stock:
         type: integer
       updatedAt:
         type: string
@@ -622,6 +728,28 @@ paths:
       summary: Page
       tags:
       - PmsProductController
+  /product/simpleList:
+    get:
+      parameters:
+      - description: name or sn
+        in: query
+        name: keyword
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.Product'
+                  type: array
+              type: object
+      summary: GetProductSimpleListNotContainsRelationData
+      tags:
+      - PmsProductController
   /product/update/deleteStatus:
     post:
       parameters:
@@ -769,11 +897,22 @@ paths:
       - PmsProductController
   /product/updateInfo/{id}:
     get:
+      parameters:
+      - description: prodcut id
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.Result'
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/pms.Product'
+              type: object
       summary: getProductInfoForUpdate
       tags:
       - PmsProductController
@@ -1221,4 +1360,31 @@ paths:
       summary: update category's show status when id in ids
       tags:
       - PmsProductCategoryController
+  /update/{id}:
+    post:
+      parameters:
+      - description: product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: want to update product
+        in: body
+        name: prodcut
+        required: true
+        schema:
+          $ref: '#/definitions/pms.Product'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: PmsUpdateProductById
+      tags:
+      - PmsProductController
 swagger: "2.0"

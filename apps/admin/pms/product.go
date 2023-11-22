@@ -2,19 +2,50 @@ package pms
 
 import (
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/AuroraOps04/mall-go/common"
 	"github.com/AuroraOps04/mall-go/common/util"
 	dto "github.com/AuroraOps04/mall-go/dto/pms"
 	"github.com/AuroraOps04/mall-go/global"
+	"github.com/AuroraOps04/mall-go/model/base/field"
 	"github.com/AuroraOps04/mall-go/model/pms"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type productController struct {
 }
 
 var ProductController = &productController{}
+
+// setSkuStockCodeAndRelation
+// SkuCode's format patten is
+func setSkuStockCodeAndRelation(list []*pms.SkuStock, productId uint) {
+	if len(list) == 0 {
+		return
+	}
+	date := time.Now().Format("20060102")
+	for i, v := range list {
+		v.ProductID = productId
+		if v.SkuCode == nil {
+			s := fmt.Sprintf("%s%04d%03d", date, productId, i+1)
+			v.SkuCode = &s
+
+		}
+	}
+}
+
+func getProductStock(list []*pms.SkuStock) *field.LikeNumberInt64 {
+	var count uint = 0
+	for _, v := range list {
+		count += v.Stock
+	}
+	c := field.LikeNumberInt64(count)
+	return &c
+}
 
 // Page
 //
@@ -36,8 +67,13 @@ func (p *productController) Page(ctx *gin.Context) {
 		common.Error(ctx, "params err: "+err.Error())
 		return
 	}
-	fmt.Println("page product params: ", param)
-	tx := global.Db.Model(&pms.Product{})
+	tx := global.Db.Model(&pms.Product{}).
+		Preload("ProductAttributeValueList").
+		Preload("MemberPriceList").
+		Preload("ProductFullReductionList").
+		Preload("ProductLadderList").
+		Preload("SkuStockList")
+
 	if param.BrandId != nil {
 		tx = tx.Where("brand_id = ?", param.BrandId)
 	}
@@ -83,13 +119,25 @@ func (p *productController) Create(ctx *gin.Context) {
 		common.Error(ctx, err.Error())
 		return
 	}
-	// TODO: process realtions
-	tx := global.Db.Create(&dto)
-	if tx.Error != nil || tx.RowsAffected == 0 {
-		common.Error(ctx, "create error")
+	err := global.Db.Transaction(func(tx *gorm.DB) error {
+		skuStockList := dto.SkuStockList
+		dto.SkuStockList = nil
+		dto.Stock = getProductStock(skuStockList)
+		if err := tx.Create(&dto).Error; err != nil {
+			return err
+		}
+		setSkuStockCodeAndRelation(skuStockList, dto.ID)
+		if len(skuStockList) == 0 {
+			return nil
+		}
+		return tx.Where("id = ?", dto.ID).Association("skuStockList").Append(skuStockList)
+	})
+
+	if err != nil {
+		common.Error(ctx, "create error: "+err.Error())
 		return
 	}
-	common.Success(ctx, tx.RowsAffected)
+	common.Success(ctx, 1)
 
 }
 
@@ -111,7 +159,7 @@ func (p *productController) UpdateNewStatus(ctx *gin.Context) {
 	ids := util.Str2IntSlice(&param.IDs, ",")
 	tx := global.Db.Model(&pms.Product{}).
 		Where("id in ?", ids).
-		Update("new_status = ?", param.NewStatus)
+		Update("new_status", param.NewStatus)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -138,7 +186,7 @@ func (p *productController) UpdatePublishStatus(ctx *gin.Context) {
 	ids := util.Str2IntSlice(&param.IDs, ",")
 	tx := global.Db.Model(&pms.Product{}).
 		Where("id in ?", ids).
-		Update("publish_status = ?", param.PublishStatus)
+		Update("publish_status", param.PublishStatus)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -164,7 +212,7 @@ func (p *productController) UpdateRecommendStatus(ctx *gin.Context) {
 	ids := util.Str2IntSlice(&param.IDs, ",")
 	tx := global.Db.Model(&pms.Product{}).
 		Where("id in ?", ids).
-		Update("recommend_status = ?", param.RecommendStatus)
+		Update("recommand_status", param.RecommendStatus)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -190,7 +238,7 @@ func (p *productController) UpdateDeleteStatus(ctx *gin.Context) {
 	ids := util.Str2IntSlice(&param.IDs, ",")
 	tx := global.Db.Model(&pms.Product{}).
 		Where("id in ?", ids).
-		Update("delete_status = ?", param.DeleteStatus)
+		Update("delete_status", param.DeleteStatus)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -216,7 +264,7 @@ func (p *productController) UpdateVerifyStatus(ctx *gin.Context) {
 	ids := util.Str2IntSlice(&param.IDs, ",")
 	tx := global.Db.Model(&pms.Product{}).
 		Where("id in ?", ids).
-		Update("verfiy_status = ?", param.VerifyStatus)
+		Update("verfiy_status", param.VerifyStatus)
 	if tx.Error != nil {
 		common.Error(ctx, tx.Error.Error())
 		return
@@ -228,8 +276,80 @@ func (p *productController) UpdateVerifyStatus(ctx *gin.Context) {
 //
 //	@Summary	getProductInfoForUpdate
 //	@Tags		PmsProductController
-//	@Success	200	object	common.Result
+//	@Param		id	path	int	true	"prodcut id"
+//	@Success	200	object	common.Result{data=pms.Product}
 //	@Router		/product/updateInfo/{id} [get]
 func (p *productController) GetInfoForUpdate(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var product pms.Product
+	// FIXME: recursion call
+	tx := global.Db.Debug().Model(&product).
+		Preload(clause.Associations).
+		Where("id = ?", id).
+		First(&product)
+	if tx.Error != nil {
+		common.Error(ctx, tx.Error.Error())
+		return
+	}
+	product.CateParentID = product.ProductCategory.ParentID
+	fmt.Printf("%%#v: %#v\n%%v:%v\n", product, product)
+	common.Success(ctx, product)
 
+}
+
+// GetSimpleList
+//
+//	@Tags		PmsProductController
+//	@Summary	GetProductSimpleListNotContainsRelationData
+//	@Param		keyword	query	string	false	"name or sn"
+//	@Success	200		object	common.Result{data=[]pms.Product}
+//	@Router		/product/simpleList [get]
+func (p *productController) GetSimpleList(ctx *gin.Context) {
+	keyword := ctx.Query("keyword")
+	var list []*pms.Product
+	keyword = "%" + keyword + "%"
+	tx := global.Db.Model(&pms.Product{}).
+		Where("name like ? or product_sn like", keyword, keyword).
+		Order("sort desc").
+		Find(&list)
+	if tx.Error != nil {
+		common.Error(ctx, tx.Error.Error())
+		return
+	}
+	common.Success(ctx, list)
+}
+
+// UpdateById
+//
+//	@Summary	PmsUpdateProductById
+//	@Tags		PmsProductController
+//	@Param		id		path	int			true	"product id"
+//	@Param		prodcut	body	pms.Product	true	"want to update product"
+//	@Success	200		object	common.Result{data=int}
+//	@Router		/update/{id} [post]
+func (p *productController) UpdateById(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var product pms.Product
+	if err := ctx.ShouldBindJSON(&product); err != nil {
+		common.Error(ctx, "params error: "+err.Error())
+		return
+	}
+	idUint, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		common.Error(ctx, "id must be int")
+		return
+	}
+	product.ID = uint(idUint)
+	err = global.Db.Transaction(func(tx *gorm.DB) error {
+		// process relations
+		// prepare skuStockList
+		setSkuStockCodeAndRelation(product.SkuStockList, product.ID)
+		// NOTE: wantch how to process relactions in gorm
+		return tx.Debug().Where("id = ?", idUint).Save(&product).Error
+	})
+	if err != nil {
+		common.Error(ctx, "update error: "+err.Error())
+		return
+	}
+	common.Success(ctx, 1)
 }

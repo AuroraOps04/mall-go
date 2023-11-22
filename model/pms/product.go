@@ -7,20 +7,20 @@ import (
 
 type ProductCategory struct {
 	base.BaseModel
-	ParentID          uint                `json:"parentId"`
-	Parent            *ProductCategory    `json:"parent"            gorm:""`
-	Children          []*ProductCategory  `json:"children"          gorm:"foreignKey:ParentID"`
-	Name              string              `json:"name"              gorm:"size:64"`
-	Level             int8                `json:"level"             gorm:"size:1"`
-	ProductCount      int                 `json:"productCount"`
-	ProductUnit       string              `json:"productUnit"       gorm:"size:64"`
-	NavStatus         int8                `json:"navStatus"         gorm:"size:1"`
-	ShowStatus        int8                `json:"showStatus"        gorm:"size:1"`
-	Sort              int                 `json:"sort"`
-	Icon              string              `json:"icon"              gorm:"size:255"`
-	Keywords          string              `json:"keywords"          gorm:"size:255"`
-	Description       string              `json:"description"       gorm:"type:text"`
-	ProductAttributes []*ProductAttribute `json:"productAttributes" gorm:"many2many:pms_product_category_attribute_relation"`
+	ParentID          uint                   `json:"parentId"`
+	Parent            *ProductCategory       `json:"parent"            gorm:""`
+	Children          []*ProductCategory     `json:"children"          gorm:"foreignKey:ParentID"`
+	Name              string                 `json:"name"              gorm:"size:64"`
+	Level             int8                   `json:"level"             gorm:"size:1"`
+	ProductCount      *field.LikeNumberInt64 `json:"productCount"`
+	ProductUnit       string                 `json:"productUnit"       gorm:"size:64"`
+	NavStatus         int8                   `json:"navStatus"         gorm:"size:1"`
+	ShowStatus        int8                   `json:"showStatus"        gorm:"size:1"`
+	Sort              *field.LikeNumberInt64 `json:"sort"`
+	Icon              string                 `json:"icon"              gorm:"size:255"`
+	Keywords          string                 `json:"keywords"          gorm:"size:255"`
+	Description       string                 `json:"description"       gorm:"type:text"`
+	ProductAttributes []*ProductAttribute    `json:"productAttributes" gorm:"many2many:pms_product_category_attribute_relation"`
 }
 
 func (p ProductCategory) TableName() string {
@@ -32,6 +32,7 @@ type Product struct {
 	BrandID                    uint                     `json:"brandId"`
 	Brand                      *Brand                   `json:"brand"`
 	ProductCategoryID          uint                     `json:"productCategoryId"`
+	CateParentID               uint                     `json:"cateParentId"`
 	ProductCategory            ProductCategory          `json:"productCategory"`
 	FeightTemplateID           uint                     `json:"feightTemplateId"`
 	FeightTemplate             FeightTemplate           `json:"feightTemplate"`
@@ -46,17 +47,17 @@ type Product struct {
 	RecommandStatus            uint8                    `json:"recommandStatus"            gorm:"size:1"`
 	VerifyStatus               uint8                    `json:"verifyStatus"               gorm:"size:1"`
 	Sort                       *field.LikeNumberInt64   `json:"sort"`
-	Sale                       int                      `json:"sale"`
+	Sale                       *field.LikeNumberInt64   `json:"sale"`
 	Price                      *field.LikeNumberFloat64 `json:"price"                      gorm:"type:decimal(10,2)"`
 	PromotionPrice             *string                  `json:"promotionPrice"             gorm:"type:decimal(10,2)"`
-	GiftGrowth                 int                      `json:"giftGrowth"`
-	GiftPoint                  int                      `json:"giftPoint"`
-	UsePointLimit              int                      `json:"usePointLimit"`
+	GiftGrowth                 *field.LikeNumberInt64   `json:"giftGrowth"`
+	GiftPoint                  *field.LikeNumberInt64   `json:"giftPoint"`
+	UsePointLimit              *field.LikeNumberInt64   `json:"usePointLimit"`
 	SubTitle                   string                   `json:"subTitle"                   gorm:"size:255"`
 	Description                string                   `json:"description"                gorm:"type:text"`
 	OriginalPrice              *field.LikeNumberFloat64 `json:"originalPrice"              gorm:"type:decimal(10,2)"`
-	Stock                      int                      `json:"stock"`
-	LowStock                   int                      `json:"lowStock"`
+	Stock                      *field.LikeNumberInt64   `json:"stock"`
+	LowStock                   *field.LikeNumberInt64   `json:"lowStock"`
 	Unit                       string                   `json:"unit"                       gorm:"size:16"`
 	Weight                     *field.LikeNumberFloat64 `json:"weight"                     gorm:"type:decimal(10,2)"`
 	PreviewStatus              uint8                    `json:"previewStatus"              gorm:"size:1"`
@@ -70,10 +71,15 @@ type Product struct {
 	DetailMobileHtml           string                   `json:"detailMobileHtml"           gorm:"type:text"`
 	PromotionStartTime         *field.DateTime          `json:"promotionStartTime"                                               time_format:"2006-01-02" time_utc:"8"`
 	PromotionEndTime           *field.DateTime          `json:"promotionEndTime"`
-	PromotionPerLimit          int                      `json:"promotionPerLimit"`
+	PromotionPerLimit          *field.LikeNumberInt64   `json:"promotionPerLimit"`
 	PromotionType              uint8                    `json:"promotionType"              gorm:"size:1"`
 	ProductCategoryName        string                   `json:"productCategoryName"        gorm:"size:255"`
 	BrandName                  string                   `json:"brandName"                  gorm:"size:255"`
+	ProductAttributeValueList  []*ProductAttributeValue `json:"productAttributeValueList"`
+	MemberPriceList            []*MemberPrice           `json:"memberPriceList"`
+	ProductFullReductionList   []*ProductFullReduction  `json:"productFullReductionList"`
+	ProductLadderList          []*ProductLadder         `json:"productLadderList"`
+	SkuStockList               []*SkuStock              `json:"skuStockList"`
 }
 
 func (p Product) TableName() string {
@@ -83,8 +89,8 @@ func (p Product) TableName() string {
 type ProductLadder struct {
 	base.BaseModel
 	ProductID uint                     `json:"productId"`
-	Product   Product                  `json:"product"`
-	Count     int                      `json:"count"`
+	Product   *Product                 `json:"product"`
+	Count     *field.LikeNumberInt64   `json:"count"`
 	Discount  *field.LikeNumberFloat64 `json:"discount"  gorm:"type:decimal(10,2)"`
 	Price     *field.LikeNumberFloat64 `json:"price"     gorm:"type:decimal(10,2)"`
 }
@@ -96,7 +102,7 @@ func (p ProductLadder) TableName() string {
 type ProductFullReduction struct {
 	base.BaseModel
 	ProductID   uint                     `json:"productId"`
-	Product     Product                  `json:"product"`
+	Product     *Product                 `json:"product"`
 	FullPrice   *field.LikeNumberFloat64 `json:"fullPrice"`
 	ReducePrice *field.LikeNumberFloat64 `json:"reducePrice"`
 }
@@ -107,22 +113,22 @@ func (p ProductFullReduction) TableName() string {
 
 type ProductOperateLog struct {
 	ProductID    uint                     `json:"productId"`
-	Product      Product                  `json:"product"`
+	Product      *Product                 `json:"product"`
 	PriceOld     *field.LikeNumberFloat64 `json:"priceOld"      gorm:"type:decimal(10,2)"`
 	PriceNew     *field.LikeNumberFloat64 `json:"priceNew"      gorm:"type:decimal(10,2)"`
 	SalePriceOld *field.LikeNumberFloat64 `json:"salePriceOld"  gorm:"type:decimal(10,2)"`
 	SalePriceNew *field.LikeNumberFloat64 `json:"salePriceNew"  gorm:"type:decimal(10,2)"`
-	GiftPointOld int                      `json:"gift_pint_old"`
-	GiftPointNew int                      `json:"giftPointNew"`
-	UsePointOld  int                      `json:"usePointOld"`
-	UsePointNew  int                      `json:"usePointNew"`
+	GiftPointOld *field.LikeNumberInt64   `json:"gift_pint_old"`
+	GiftPointNew *field.LikeNumberInt64   `json:"giftPointNew"`
+	UsePointOld  *field.LikeNumberInt64   `json:"usePointOld"`
+	UsePointNew  *field.LikeNumberInt64   `json:"usePointNew"`
 	OperateMan   string                   `json:"operateMan"    gorm:"size:64"`
 }
 
 type ProductVertifyRecord struct {
-	ProductID  uint    `json:"productId"  gorm:""`
-	Product    Product `json:"product"`
-	VertifyMan string  `json:"vertifyMan" gorm:"size:64"`
-	Status     uint8   `json:"status"     gorm:"size:1"`
-	Detail     string  `json:"detail"     gorm:"size:255"`
+	ProductID  uint     `json:"productId"  gorm:""`
+	Product    *Product `json:"product"`
+	VertifyMan string   `json:"vertifyMan" gorm:"size:64"`
+	Status     uint8    `json:"status"     gorm:"size:1"`
+	Detail     string   `json:"detail"     gorm:"size:255"`
 }

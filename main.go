@@ -32,7 +32,7 @@ import (
 //	@externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
 	dialector := mysql.Open(
-		"root:123456@tcp(10.0.0.10)/mall?charset=utf8mb4&parseTime=True&loc=Local",
+		"root:123456@tcp(10.0.0.10)/mall_go?charset=utf8mb4&parseTime=True&loc=Local",
 	)
 	//dialector := mysql.Open("reader:123456@tcp(192.168.59.10)/mall?charset=utf8mb4&parseTime=True&loc=Local")
 	global.Db, _ = gorm.Open(dialector, &gorm.Config{
@@ -44,10 +44,9 @@ func main() {
 
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	adminGrouP := engine.Group("/admin")
+	adminGrouP := engine.Group("/api")
 	pmsView.Route(adminGrouP)
 	common.Route(adminGrouP)
-
 	engine.Static("/static", "./static")
 	engine.Run(":4000")
 

@@ -472,6 +472,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/simpleList": {
+            "get": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "GetProductSimpleListNotContainsRelationData",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "name or sn",
+                        "name": "keyword",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pms.Product"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/product/update/deleteStatus": {
             "post": {
                 "tags": [
@@ -718,11 +757,32 @@ const docTemplate = `{
                     "PmsProductController"
                 ],
                 "summary": "getProductInfoForUpdate",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "prodcut id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/common.Result"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/pms.Product"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -1494,6 +1554,52 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/update/{id}": {
+            "post": {
+                "tags": [
+                    "PmsProductController"
+                ],
+                "summary": "PmsUpdateProductById",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "product id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "want to update product",
+                        "name": "prodcut",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pms.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1685,6 +1791,32 @@ const docTemplate = `{
                 }
             }
         },
+        "pms.MemberPrice": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "member_level_id": {
+                    "type": "integer"
+                },
+                "member_level_name": {
+                    "type": "string"
+                },
+                "member_price": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "pms.Product": {
             "type": "object",
             "properties": {
@@ -1742,6 +1874,12 @@ const docTemplate = `{
                 "lowStock": {
                     "type": "integer"
                 },
+                "memberPriceList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pms.MemberPrice"
+                    }
+                },
                 "name": {
                     "type": "string"
                 },
@@ -1769,6 +1907,12 @@ const docTemplate = `{
                 "productAttributeCategoryId": {
                     "type": "integer"
                 },
+                "productAttributeValueList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pms.ProductAttributeValue"
+                    }
+                },
                 "productCategory": {
                     "$ref": "#/definitions/pms.ProductCategory"
                 },
@@ -1777,6 +1921,18 @@ const docTemplate = `{
                 },
                 "productCategoryName": {
                     "type": "string"
+                },
+                "productFullReductionList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pms.ProductFullReduction"
+                    }
+                },
+                "productLadderList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pms.ProductLadder"
+                    }
                 },
                 "productSn": {
                     "type": "string"
@@ -1807,6 +1963,12 @@ const docTemplate = `{
                 },
                 "serviceIds": {
                     "type": "string"
+                },
+                "skuStockList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pms.SkuStock"
+                    }
                 },
                 "sort": {
                     "type": "integer"
@@ -2006,6 +2168,111 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sort": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "pms.ProductFullReduction": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "fullPrice": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "product": {
+                    "$ref": "#/definitions/pms.Product"
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "reducePrice": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "pms.ProductLadder": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "discount": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product": {
+                    "$ref": "#/definitions/pms.Product"
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "pms.SkuStock": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lock_stock": {
+                    "type": "integer"
+                },
+                "low_stock": {
+                    "type": "integer"
+                },
+                "pic": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "promotion_price": {
+                    "type": "number"
+                },
+                "sale": {
+                    "type": "integer"
+                },
+                "sku_code": {
+                    "type": "string"
+                },
+                "sp1": {
+                    "type": "string"
+                },
+                "sp2": {
+                    "type": "string"
+                },
+                "sp3": {
+                    "type": "string"
+                },
+                "stock": {
                     "type": "integer"
                 },
                 "updatedAt": {
