@@ -18,7 +18,7 @@ import (
 // main entry function
 //
 //	@Host						localhost:4000
-//	@BasePath					/admin
+//	@BasePath					/api
 //	@Title						mall api based on go
 //	@Description				based on gin gorm
 //	@Version					v1.0

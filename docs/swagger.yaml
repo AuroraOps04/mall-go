@@ -151,6 +151,8 @@ definitions:
         type: integer
       brandName:
         type: string
+      cateParentId:
+        type: integer
       createdAt:
         type: string
       deleteStatus:
@@ -1360,6 +1362,62 @@ paths:
       summary: update category's show status when id in ids
       tags:
       - PmsProductCategoryController
+  /sku/{pid}:
+    get:
+      parameters:
+      - description: product id
+        in: path
+        name: pid
+        required: true
+        type: integer
+      - description: sku code
+        in: query
+        name: keyword
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pms.SkuStock'
+                  type: array
+              type: object
+      summary: get sku stock by prodcut id
+      tags:
+      - PmsSkuStockController
+  /sku/update/{pid}:
+    post:
+      parameters:
+      - description: prodcut id
+        in: path
+        name: pid
+        required: true
+        type: integer
+      - description: skuList
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pms.SkuStock'
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: update product's skuList by product id
+      tags:
+      - PmsSkuStockController
   /update/{id}:
     post:
       parameters:

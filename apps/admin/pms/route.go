@@ -70,4 +70,10 @@ func Route(engine *gin.RouterGroup) {
 		productGroup.POST("/update/:id", ProductController.UpdateById)
 
 	}
+
+	stockGroup := engine.Group("/sku")
+	{
+		stockGroup.GET("/:pid", SkuStockController.GetByProductId)
+		stockGroup.POST("/update/:pid", SkuStockController.UpdateSkusById)
+	}
 }

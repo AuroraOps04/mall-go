@@ -1555,6 +1555,101 @@ const docTemplate = `{
                 }
             }
         },
+        "/sku/update/{pid}": {
+            "post": {
+                "tags": [
+                    "PmsSkuStockController"
+                ],
+                "summary": "update product's skuList by product id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "prodcut id",
+                        "name": "pid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "skuList",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pms.SkuStock"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/sku/{pid}": {
+            "get": {
+                "tags": [
+                    "PmsSkuStockController"
+                ],
+                "summary": "get sku stock by prodcut id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "product id",
+                        "name": "pid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "sku code",
+                        "name": "keyword",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/pms.SkuStock"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/update/{id}": {
             "post": {
                 "tags": [
@@ -1831,6 +1926,9 @@ const docTemplate = `{
                 },
                 "brandName": {
                     "type": "string"
+                },
+                "cateParentId": {
+                    "type": "integer"
                 },
                 "createdAt": {
                     "type": "string"
